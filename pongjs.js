@@ -111,11 +111,12 @@ function main()
     x_init : 50,
     y_init : 50,
 
-    xspeed : 5,
+    xspeed : 3,
     yspeed : 1,
+    ang : 1,
 
     ctx: null,
-    width : 5,
+    width : 3,
     height : 5,
 
     reset : function() {
@@ -131,8 +132,15 @@ function main()
 
     draw : function() {
       //console.log("Bola: Draw");
-      this.ctx.fillStyle = "white";
-      this.ctx.fillRect(this.x, this.y, this.width, this.height);
+      /*this.ctx.fillStyle = "white";
+      this.ctx.fillRect(this.x, this.y, this.width, this.height);*/
+      ctx.beginPath();
+      //-- Dibujar un circulo: coordenadas x,y del centro
+      //-- Radio, Angulo inicial y angulo final
+      ctx.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
+      //-- Dibujar el relleno
+      ctx.fillStyle = 'white';
+      ctx.fill()
 
       // Lineas verticales
       ctx.beginPath();
@@ -146,30 +154,34 @@ function main()
     update : function() {
       //console.log("Bola: Update");
       if (this.x > canvas.width) {
-        this.xspeed = -this.xspeed;
+        this.xspeed = (-1 * this.xspeed);
       } else if (this.x < 0) {
-        this.xspeed = this.xspeed * -1;
+        this.xspeed = (this.xspeed * -1);
       }
 
       this.x = this.x + this.xspeed;
-      this.y = this.y + this.yspeed;
+      this.y = this.y + this.yspeed * this.ang;
 
     }
   }
 
+  function reboundAngle(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   function rebote(raqueta1, raqueta2, bola) {
     // Rebote lazo izquierdo.
-    if (bola.x <= (raqueta1.x_init + raqueta1.width) && bola.x >= raqueta1.x_init){
-        if (bola.y >= raqueta1.y && bola.y <= (raqueta1.y + raqueta1.height)) {
-        console.log("EEEEEEEH")
-        bola.xspeed = -1 * bola.xspeed;
+    if (bola.x <= raqueta1.x_init) {
+      if (bola.y >= raqueta1.y && bola.y <= (raqueta1.y + 40)) {
+        bola.ang =  reboundAngle(-2, 2)
+        bola.xspeed = -1 * bola.xspeed
       }
     }
 
     // Rebote lado derecho
-    if (bola.x <= (raqueta2.x_init + raqueta2.width) && bola.x >= raqueta2.x_init) {
-      if(bola.x >= raqueta2.y && bola.y <= (raqueta2.y + raqueta2.height)) {
-        console.log("AAAAAAH")
+    if (bola.x >= raqueta2.x_init) {
+      if(bola.y >= raqueta2.y && bola.y <= (raqueta2.y + 40)) {
+        bola.ang =  reboundAngle(-2, 2)
         bola.xspeed = -1 * bola.xspeed;
       }
     }
