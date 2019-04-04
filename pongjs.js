@@ -8,7 +8,6 @@ function main()
 
   var ctx = canvas.getContext("2d");
 
-
   // Raquetas
   function raqueta(x_init, y_init) {
     this.color = "white";
@@ -16,7 +15,8 @@ function main()
     this.y_init = y_init;
     this.y = this.y_init;
     this.dir = 1;
-    this.yspeed = 0;
+    this.vy = 1;
+    this.speed = 5;
 
     this.reset = function() {
       this.y = this.y_init;
@@ -34,11 +34,11 @@ function main()
 
     this.update = function () {
       if (this.y < canvas.height) {
-        this.y += this.dir * this.yspeed;
+        this.y += this.dir * this.speed * this.vy;
       } else if (this.y > 0) {
-        this.y += this.dir * this.yspeed;
+        this.y += this.dir * this.speed * this.vy;
       } else {
-        this.y = -1 * this.yspeed;
+        this.y = -1 * this.speed * this.vy;
       }
   }
 }
@@ -52,24 +52,24 @@ function main()
         console.log(e.key)
         switch (e.key) {
             case 'w':
-                raqueta1.yspeed = -5;
-                raqueta2.yspeed = 0;
+                raqueta1.vy = -1;
+                raqueta2.vy = 0;
                 break;
             case 's':
-                raqueta1.yspeed = 5;
-                raqueta2.yspeed = 0;
+                raqueta1.vy = 1;
+                raqueta2.vy = 0;
                 break;
             case 'ArrowUp':
-                raqueta1.yspeed = 0;
-                raqueta2.yspeed = -5;
+                raqueta1.vy = 0;
+                raqueta2.vy = -1;
                 break;
             case 'ArrowDown':
-                raqueta1.yspeed = 0;
-                raqueta2.yspeed = 5;
+                raqueta1.vy = 0;
+                raqueta2.vy = 1;
                 break;
             default:
-                raqueta1.yspeed = 0;
-                raqueta2.yspeed = 0;
+                raqueta1.vy = 0;
+                raqueta2.vy = 0;
                 break;
         }
         raqueta1.update();
@@ -77,29 +77,16 @@ function main()
       }
     }
 
-/*
-  // Dibujamos el círculo
-  ctx.beginPath();
-  //-- Dibujar un circulo: coordenadas x,y del centro
-  //-- Radio, Angulo inicial y angulo final
-  ctx.arc(400, 250, 5, 0, 2 * Math.PI);
-  //-- Dibujar el relleno
-  ctx.fillStyle = 'white';
-  ctx.fill()
-*/
-
-  //  var y = 0;
-  //  while (y <= 400)
-  //  {
-  //    ctx.fillStyle = "white";
-  //    ctx.fillRect(300, y, 2, 15);
-  //    y += 30;
-  //  }
-
 var score = {
     scplayer1: 0,
     scplayer2: 0,
     winner : 0,
+
+    reset : function() {
+      this.scplayer1 = 0;
+      this.scplayer2 = 0;
+      this.winner = 0;
+    },
 
     init : function(ctx) {
       this.ctx = ctx;
@@ -108,8 +95,8 @@ var score = {
     draw : function() {
       ctx.font = "70px Arial";
       ctx.fillStyle = 'white'
-      ctx.fillText(this.scplayer1, 250, 60);
-      ctx.fillText(this.scplayer2, 320, 60);
+      ctx.fillText(this.scplayer1, 220, 60);
+      ctx.fillText(this.scplayer2, 340, 60);
 
       // Lineas verticales
       ctx.beginPath();
@@ -132,7 +119,6 @@ var score = {
       }
     }
   }
-
 
   // Animamos la pelota
   var bola = {
@@ -221,6 +207,28 @@ var score = {
     }
   }
 
+/*  function check_options(bola, raqueta1, raqueta2) {
+    var difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+
+   switch (difficulty) {
+      case "easy":
+        bola.xspeed = 1;
+        raqueta1.speed = 3;
+        raqueta2.speed = 3;
+        break;
+      case "medium":
+        bola.xspeed = 3;
+        raqueta1.speed = 5;
+        raqueta2.speed = 5;
+        break;
+      default:
+        bola.xspeed = 3;
+        raqueta1.speed = 5;
+        raqueta3.speed = 5;
+    }
+
+  } */
+
   bola.init(ctx);
   bola.draw();
   raqueta1.init(ctx);
@@ -232,6 +240,7 @@ var score = {
 
   var timer = null;
   var sacar = document.getElementById("sacar");
+  var pointstw = document.querySelector('input[name="point"]:checked').value;
 
   sacar.onclick = () => {
     if (!timer) {
@@ -239,7 +248,6 @@ var score = {
       timer = setInterval(() => {
         // Cada 20ms, actualizamos bola
         bola.update()
-        move_raqueta(raqueta1, raqueta2)
         // Borramos canvas
         ctx.clearRect(0,0,canvas.width, canvas.height);
         // Dibujo la bola
@@ -248,8 +256,36 @@ var score = {
         raqueta2.draw()
         score.update()
         score.draw()
+
+        move_raqueta(raqueta1, raqueta2)
         rebote(raqueta1, raqueta2, bola)
+
         // Condición de terminación
+        if (pointstw != "inf") {
+          if (pointstw == score.scplayer1 || pointstw == score.scplayer2) {
+            clearInterval(timer)
+            timer = null;
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+
+            ctx.font = "50px Arial";
+            ctx.fillStyle = 'white'
+            ctx.fillText("GAME OVER", 150, 200);
+            if (score.player1 > score.player2) {
+              ctx.fillText("PLAYER 1 WINS", 150, 300);
+            } else {
+              ctx.fillText("PLAYER 2 WINS", 125, 300);
+            }
+            bola.reset()
+            raqueta1.reset()
+            raqueta2.reset()
+            score.reset()
+
+            bola.draw()
+            raqueta1.draw()
+            raqueta2.draw()
+            score.draw()
+          }
+        }
       }, 20);
     }
   }
