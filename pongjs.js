@@ -8,51 +8,74 @@ function main()
 
   var ctx = canvas.getContext("2d");
 
-  window.onkeydown = (e) => {
-    e.preventDefault();
-
-    console.log(e.key);
-
-    if (e.key == "a") {
-      console.log("tecla a pressed")
-    }
-  }
 
   // Raquetas
-  function raqueta(x_init, y_init, upkey, downkey) {
-
+  function raqueta(x_init, y_init) {
     this.color = "white";
     this.x_init = x_init;
     this.y_init = y_init;
     this.x = 0;
-    this.y = 0;
-    this.yspeed = 5;
-    this.upkey = null;
-    this.downkey = null;
+    this.y = 200;
+    this.dir = 1;
+    this.yspeed = 0;
 
-    ctx.fillStyle = this.color;
-    ctx.fillRect(this.x_init, this.y_init, 10, 40);
+    this.init = function(ctx) {
+      this.ctx = ctx;
+      //this.reset();
+    };
 
-    this.draw = function () {
-      ctx.fillRect(this.x_init, this.y, 10, 40);
-    }
+    this.draw = function() {
+        this.ctx.fillStyle = this.color;
+        this.ctx.fillRect(this.x_init, this.y, 10, 40);
+    };
 
     this.update = function () {
-      window.onkeydown = (e) => {
-        e.preventDefault();
-        console.log(e.key);
+      if (this.y < canvas.height) {
+        this.y += this.dir * this.yspeed;
+      } else if (this.y > 0) {
+        this.y += this.dir * this.yspeed;
+      } else {
+        this.y = -1 * this.yspeed;
+      }
+  }
+}
 
-        if (e.key == this.upkey) {
-          console.log("probando");
-          this.y = this.y + this.yspeed;
-          ctx.fillRect(this.x_init, this.y, 10, 40);
+  var raqueta1 = new raqueta(50, 50);
+  var raqueta2 = new raqueta(550, 300);
+
+  function move_raqueta(raqueta1, raqueta2) {
+    window.onkeydown = (e) => {
+        e.preventDefault();
+        console.log(e.key)
+        switch (e.key) {
+            case 'w':
+                raqueta1.yspeed = -5;
+                raqueta2.yspeed = 0;
+                break;
+            case 's':
+                raqueta1.yspeed = 5;
+                raqueta2.yspeed = 0;
+                break;
+            case 'ArrowUp':
+                raqueta1.yspeed = 0;
+                raqueta2.yspeed = -5;
+                break;
+            case 'ArrowDown':
+                raqueta1.yspeed = 0;
+                raqueta2.yspeed = 5;
+                break;
+            default:
+                raqueta1.yspeed = 0;
+                raqueta2.yspeed = 0;
+                break;
         }
+        raqueta1.update();
+        raqueta2.update();
       }
     }
-  }
 
-  var raqueta1 = new raqueta(50, 50, "w", "s");
-  var raqueta2 = new raqueta(500, 300, "ArrowUp", "ArrowDown");
+
+
 /*
   // Dibujamos el círculo
   ctx.beginPath();
@@ -63,14 +86,6 @@ function main()
   ctx.fillStyle = 'white';
   ctx.fill()
 */
-
-  // Lineas verticales
-  ctx.beginPath();
-  ctx.strokeStyle = "white";
-  ctx.setLineDash([20,15])
-  ctx.moveTo(canvas.width/2, 0)
-  ctx.lineTo(canvas.width/2, canvas.height)
-  ctx.stroke();
 
   //  var y = 0;
   //  while (y <= 400)
@@ -109,40 +124,63 @@ function main()
     },
 
     init : function(ctx) {
-      console.log("Bola: Init");
+      //console.log("Bola: Init");
       this.reset();
       this.ctx = ctx;
     },
 
     draw : function() {
-      console.log("Bola: Draw");
+      //console.log("Bola: Draw");
       this.ctx.fillStyle = "white";
       this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+      // Lineas verticales
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.setLineDash([20,15])
+      ctx.moveTo(canvas.width/2, 0)
+      ctx.lineTo(canvas.width/2, canvas.height)
+      ctx.stroke();
     },
 
     update : function() {
-      console.log("Bola: Update");
+      //console.log("Bola: Update");
       if (this.x > canvas.width) {
         this.xspeed = -this.xspeed;
       } else if (this.x < 0) {
         this.xspeed = this.xspeed * -1;
-        console.log(this.xspeed)
-      }
-
-      // REBOTA UN POCO RARO, REVISAR
-      if (this.y > canvas.height) {
-        this.yspeed = -this.xspeed;
-      } else if (this.x < 0) {
-        this.yspeed = this.yspeed * -1;
       }
 
       this.x = this.x + this.xspeed;
       this.y = this.y + this.yspeed;
+
+    }
+  }
+
+  function rebote(raqueta1, raqueta2, bola) {
+    // Rebote lazo izquierdo.
+    if (bola.x <= (raqueta1.x_init + raqueta1.width) && bola.x >= raqueta1.x_init){
+        if (bola.y >= raqueta1.y && bola.y <= (raqueta1.y + raqueta1.height)) {
+        console.log("EEEEEEEH")
+        bola.xspeed = -1 * bola.xspeed;
+      }
+    }
+
+    // Rebote lado derecho
+    if (bola.x <= (raqueta2.x_init + raqueta2.width) && bola.x >= raqueta2.x_init) {
+      if(bola.x >= raqueta2.y && bola.y <= (raqueta2.y + raqueta2.height)) {
+        console.log("AAAAAAH")
+        bola.xspeed = -1 * bola.xspeed;
+      }
     }
   }
 
   bola.init(ctx);
   bola.draw();
+  raqueta1.init(ctx);
+  raqueta1.draw();
+  raqueta2.init(ctx);
+  raqueta2.draw();
 
   var timer = null;
   var sacar = document.getElementById("sacar");
@@ -151,13 +189,17 @@ function main()
     if (!timer) {
       // Lanzar timer si es que no estaba ya lanzado
       timer = setInterval(() => {
-        console.log("aiuda");
         // Cada 20ms, actualizamos bola
         bola.update()
+        //console.log(raqueta1.yspeed)
+        move_raqueta(raqueta1, raqueta2)
         // Borramos canvas
         ctx.clearRect(0,0,canvas.width, canvas.height);
         // Dibujo la bola
         bola.draw()
+        raqueta1.draw()
+        raqueta2.draw()
+        rebote(raqueta1, raqueta2, bola)
         // Condición de terminación
       }, 20);
     }
