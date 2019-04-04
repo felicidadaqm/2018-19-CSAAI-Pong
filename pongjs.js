@@ -14,14 +14,17 @@ function main()
     this.color = "white";
     this.x_init = x_init;
     this.y_init = y_init;
-    this.x = 0;
-    this.y = 200;
+    this.y = this.y_init;
     this.dir = 1;
     this.yspeed = 0;
 
+    this.reset = function() {
+      this.y = this.y_init;
+    },
+
     this.init = function(ctx) {
       this.ctx = ctx;
-      //this.reset();
+      this.reset();
     };
 
     this.draw = function() {
@@ -40,8 +43,8 @@ function main()
   }
 }
 
-  var raqueta1 = new raqueta(50, 50);
-  var raqueta2 = new raqueta(550, 300);
+  var raqueta1 = new raqueta(50, 200);
+  var raqueta2 = new raqueta(550, 200);
 
   function move_raqueta(raqueta1, raqueta2) {
     window.onkeydown = (e) => {
@@ -74,8 +77,6 @@ function main()
       }
     }
 
-
-
 /*
   // Dibujamos el círculo
   ctx.beginPath();
@@ -95,21 +96,51 @@ function main()
   //    y += 30;
   //  }
 
-  // Poniendo letras
-  ctx.font = "70px Arial";
-  ctx.fillStyle = 'white'
-  ctx.fillText("2", 250, 60);
-  ctx.fillText("0", 320, 60);
+var score = {
+    scplayer1: 0,
+    scplayer2: 0,
+    winner : 0,
+
+    init : function(ctx) {
+      this.ctx = ctx;
+    },
+
+    draw : function() {
+      ctx.font = "70px Arial";
+      ctx.fillStyle = 'white'
+      ctx.fillText(this.scplayer1, 250, 60);
+      ctx.fillText(this.scplayer2, 320, 60);
+
+      // Lineas verticales
+      ctx.beginPath();
+      ctx.strokeStyle = "white";
+      ctx.setLineDash([20,15])
+      ctx.moveTo(canvas.width/2, 0)
+      ctx.lineTo(canvas.width/2, canvas.height)
+      ctx.stroke();
+    },
+
+    update : function() {
+      if (bola.x > canvas.width) {
+        this.scplayer1 += 1;
+        this.winner = 1;
+        restart(this.winner, bola, raqueta1, raqueta2)
+      } else if (bola.x < 0) {
+        this.scplayer2 += 1;
+        this.winner = 2;
+        restart(this.winner, bola, raqueta1, raqueta2)
+      }
+    }
+  }
 
 
   // Animamos la pelota
   var bola = {
-
     x : 0,
     y : 0,
 
-    x_init : 50,
-    y_init : 50,
+    x_init : 300,
+    y_init : 200,
 
     xspeed : 3,
     yspeed : 1,
@@ -122,6 +153,7 @@ function main()
     reset : function() {
       this.x = this.x_init;
       this.y = this.y_init;
+      this.ang = 1;
     },
 
     init : function(ctx) {
@@ -132,8 +164,6 @@ function main()
 
     draw : function() {
       //console.log("Bola: Draw");
-      /*this.ctx.fillStyle = "white";
-      this.ctx.fillRect(this.x, this.y, this.width, this.height);*/
       ctx.beginPath();
       //-- Dibujar un circulo: coordenadas x,y del centro
       //-- Radio, Angulo inicial y angulo final
@@ -141,27 +171,18 @@ function main()
       //-- Dibujar el relleno
       ctx.fillStyle = 'white';
       ctx.fill()
-
-      // Lineas verticales
-      ctx.beginPath();
-      ctx.strokeStyle = "white";
-      ctx.setLineDash([20,15])
-      ctx.moveTo(canvas.width/2, 0)
-      ctx.lineTo(canvas.width/2, canvas.height)
-      ctx.stroke();
     },
 
     update : function() {
       //console.log("Bola: Update");
-      if (this.x > canvas.width) {
-        this.xspeed = (-1 * this.xspeed);
-      } else if (this.x < 0) {
-        this.xspeed = (this.xspeed * -1);
+      // Rebotando si choca contra y
+      if (this.y < 0) {
+        this.ang = this.ang * -1
+      } else if (this.y > canvas.height) {
+        this.ang = this.ang * -1
       }
-
       this.x = this.x + this.xspeed;
       this.y = this.y + this.yspeed * this.ang;
-
     }
   }
 
@@ -187,12 +208,27 @@ function main()
     }
   }
 
+  function restart(winner, bola, raqueta1, raqueta2) {
+    //Si la pelota sale del campo, reiniciamos
+    bola.reset();
+    raqueta1.reset();
+    raqueta2.reset();
+
+    if (winner == 1) {
+      bola.xspeed = -1 * bola.xspeed;
+    } else if (winner == 2) {
+      bola.xspeed = -1 * bola.xspeed;
+    }
+  }
+
   bola.init(ctx);
   bola.draw();
   raqueta1.init(ctx);
   raqueta1.draw();
   raqueta2.init(ctx);
   raqueta2.draw();
+  score.init(ctx);
+  score.draw();
 
   var timer = null;
   var sacar = document.getElementById("sacar");
@@ -203,7 +239,6 @@ function main()
       timer = setInterval(() => {
         // Cada 20ms, actualizamos bola
         bola.update()
-        //console.log(raqueta1.yspeed)
         move_raqueta(raqueta1, raqueta2)
         // Borramos canvas
         ctx.clearRect(0,0,canvas.width, canvas.height);
@@ -211,6 +246,8 @@ function main()
         bola.draw()
         raqueta1.draw()
         raqueta2.draw()
+        score.update()
+        score.draw()
         rebote(raqueta1, raqueta2, bola)
         // Condición de terminación
       }, 20);
