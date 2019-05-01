@@ -77,48 +77,48 @@ function main()
       }
     }
 
-var score = {
-    scplayer1: 0,
-    scplayer2: 0,
-    winner : 0,
+    var score = {
+      scplayer1: 0,
+      scplayer2: 0,
+      winner : 0,
 
-    reset : function() {
-      this.scplayer1 = 0;
-      this.scplayer2 = 0;
-      this.winner = 0;
-    },
+      reset : function() {
+        this.scplayer1 = 0;
+        this.scplayer2 = 0;
+        this.winner = 0;
+      },
 
-    init : function(ctx) {
-      this.ctx = ctx;
-    },
+      init : function(ctx) {
+        this.ctx = ctx;
+      },
 
-    draw : function() {
-      ctx.font = "70px Arial";
-      ctx.fillStyle = 'white'
-      ctx.fillText(this.scplayer1, 220, 60);
-      ctx.fillText(this.scplayer2, 340, 60);
+      draw : function() {
+        ctx.font = "70px Arial";
+        ctx.fillStyle = 'white'
+        ctx.fillText(this.scplayer1, 220, 60);
+        ctx.fillText(this.scplayer2, 340, 60);
 
-      // Lineas verticales
-      ctx.beginPath();
-      ctx.strokeStyle = "white";
-      ctx.setLineDash([20,15])
-      ctx.moveTo(canvas.width/2, 0)
-      ctx.lineTo(canvas.width/2, canvas.height)
-      ctx.stroke();
-    },
+        // Lineas verticales
+        ctx.beginPath();
+        ctx.strokeStyle = "white";
+        ctx.setLineDash([20,15])
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2, canvas.height)
+        ctx.stroke();
+      },
 
-    update : function() {
-      if (bola.x > canvas.width) {
-        this.scplayer1 += 1;
-        this.winner = 1;
-        restart(this.winner, bola, raqueta1, raqueta2)
-      } else if (bola.x < 0) {
-        this.scplayer2 += 1;
-        this.winner = 2;
-        restart(this.winner, bola, raqueta1, raqueta2)
+      update : function() {
+        if (bola.x > canvas.width) {
+          this.scplayer1 += 1;
+          this.winner = 1;
+          restart(this.winner, bola, raqueta1, raqueta2)
+        } else if (bola.x < 0) {
+          this.scplayer2 += 1;
+          this.winner = 2;
+          restart(this.winner, bola, raqueta1, raqueta2)
+        }
       }
     }
-  }
 
   // Animamos la pelota
   var bola = {
@@ -128,7 +128,7 @@ var score = {
     x_init : 300,
     y_init : 200,
 
-    xspeed : 3,
+    xspeed : 5,
     yspeed : 1,
     ang : 1,
 
@@ -149,7 +149,6 @@ var score = {
     },
 
     draw : function() {
-      //console.log("Bola: Draw");
       ctx.beginPath();
       //-- Dibujar un circulo: coordenadas x,y del centro
       //-- Radio, Angulo inicial y angulo final
@@ -160,7 +159,6 @@ var score = {
     },
 
     update : function() {
-      //console.log("Bola: Update");
       // Rebotando si choca contra y
       if (this.y < 0) {
         this.ang = this.ang * -1
@@ -207,24 +205,38 @@ var score = {
     }
   }
 
-/*  function check_options(bola, raqueta1, raqueta2) {
-    var difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-
-   switch (difficulty) {
-      case "easy":
+  function check_options(bola, level) {
+    switch (level) {
+      case "E":
+        bola.xspeed = 1;
+        break;
+      case "M":
+        bola.xspeed = 3;
+        break;
+      case "H":
+        bola.xspeed = 5;
+        break
+      default:
+        bola.speed = 3;
+        break
+    }
+  }
+ /* function check_options(bola, raqueta1, raqueta2, level) {
+   switch (level) {
+      case "E":
         bola.xspeed = 1;
         raqueta1.speed = 3;
         raqueta2.speed = 3;
         break;
-      case "medium":
+      case "M":
         bola.xspeed = 3;
         raqueta1.speed = 5;
         raqueta2.speed = 5;
         break;
       default:
-        bola.xspeed = 3;
-        raqueta1.speed = 5;
-        raqueta3.speed = 5;
+        bola.xspeed = 5;
+        raqueta1.speed = 7;
+        raqueta3.speed = 7;
     }
 
   } */
@@ -241,8 +253,13 @@ var score = {
   var timer = null;
   var sacar = document.getElementById("sacar");
   var pointstw = document.querySelector('input[name="point"]:checked').value;
+  var difficulty = document.querySelector('input[name="diff"]:checked').value;
 
   sacar.onclick = () => {
+    pointstw = document.querySelector('input[name="point"]:checked').value;
+    level = document.querySelector('input[name="diff"]:checked').value;
+    check_options(bola, level)
+
     if (!timer) {
       // Lanzar timer si es que no estaba ya lanzado
       timer = setInterval(() => {
