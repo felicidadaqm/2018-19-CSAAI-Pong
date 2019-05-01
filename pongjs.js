@@ -28,8 +28,8 @@ function main()
     };
 
     this.draw = function() {
-        this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.x_init, this.y, 10, 40);
+      this.ctx.fillStyle = this.color;
+      this.ctx.fillRect(this.x_init, this.y, 10, 40);
     };
 
     this.update = function () {
@@ -221,25 +221,6 @@ function main()
         break
     }
   }
- /* function check_options(bola, raqueta1, raqueta2, level) {
-   switch (level) {
-      case "E":
-        bola.xspeed = 1;
-        raqueta1.speed = 3;
-        raqueta2.speed = 3;
-        break;
-      case "M":
-        bola.xspeed = 3;
-        raqueta1.speed = 5;
-        raqueta2.speed = 5;
-        break;
-      default:
-        bola.xspeed = 5;
-        raqueta1.speed = 7;
-        raqueta3.speed = 7;
-    }
-
-  } */
 
   bola.init(ctx);
   bola.draw();
@@ -287,11 +268,14 @@ function main()
             ctx.font = "50px Arial";
             ctx.fillStyle = 'white'
             ctx.fillText("GAME OVER", 150, 200);
-            if (score.player1 > score.player2) {
-              ctx.fillText("PLAYER 1 WINS", 150, 300);
+            console.log(score.scplayer1)
+            console.log(score.scplayer2)
+            if (score.scplayer1 > score.scplayer2) {
+              ctx.fillText("PLAYER 1 WINS", 125, 300);
             } else {
               ctx.fillText("PLAYER 2 WINS", 125, 300);
             }
+
             bola.reset()
             raqueta1.reset()
             raqueta2.reset()
