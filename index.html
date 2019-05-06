@@ -9,19 +9,47 @@
   </head>
   <body onload="main()">
     <p> Primera versión de pong</p>
-    <canvas id="display"></canvas>
+    <div class="pagina">
+      <div id="left">
+        <div class="monitor">
+          <canvas id="display"></canvas>
+        </div>
+        <div id="desk">
+        </div>
+      </div>
     <br>
-    <button type="button" id="sacar">Sacar</button>
-    <br>
-    <b>Points to win</b>
-    <input type="radio" name="point" value="2" checked> 2
-    <input type="radio" name="point" value="5"> 5
-    <input type="radio" name="point" value="10"> 10
-    <input type="radio" name="point" value="inf"> infinity
 
-    <br><b>Difficulty</b>
-    <input type="radio" name="diff" value="E"> Easy
-    <input type="radio" name="diff" value="M" checked> Medium
-    <input type="radio" name="diff" value="H"> Hard
+    <div id="right">
+      <button type="button" id="sacar">Sacar</button>
+      <br><br>
+      <div id="table">
+        <br>
+        <div class="note">
+          <p class="title"><b>Points to win</b></p>
+          <p class="choices">
+          <input type="radio" name="point" value="2" checked> 2
+          <br>
+          <input type="radio" name="point" value="5"> 5
+          <br>
+          <input type="radio" name="point" value="10"> 10
+          <br>
+          <input type="radio" name="point" value="inf"> infinity
+          </p>
+        </div>
+
+        <br>
+        <div class="note">
+          <p class="title"><b>Difficulty</b></p>
+          <p class="choices">
+          <input type="radio" name="diff" value="E"> Easy
+          <br>
+          <input type="radio" name="diff" value="M" checked> Medium
+          <br>
+          <input type="radio" name="diff" value="H"> Hard
+          </p>
+        </div>
+    </div>
+    </div>
+  </div>
   </body>
 </html>

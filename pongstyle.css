@@ -1,3 +1,132 @@
 #display {
   background-color: black;
 }
+
+#página{
+  column-count: 2;
+  column-gap: 50px;
+  text-align: left;
+  width: 1300px;
+  margin: auto;}
+
+#left{
+  width: 800px;  /*Ancho cholumna*/
+  background-color: white;
+  float:left;
+}
+
+#right{
+  margin-left: 800px; /*Margen*/
+  background-color: white;
+}
+
+.monitor {
+  margin: auto;
+  width: 600px;
+  height: 400px;
+  background: #000;
+  border-bottom: 35px solid #d8d8d8;
+  border-left: 20px solid #d8d8d8;
+  border-right: 20px solid #d8d8d8;
+  border-top: 20px solid #d8d8d8;
+  border-radius: 15px;
+}
+
+.monitor:before
+{
+  content: "";
+  width: 70px;
+  height: 60px;
+  background: #bdbdbd;
+  position: absolute;
+  left: 30%;
+  margin: auto;
+  top: 480px;
+  transform: perspective(100px) translateX(-50%) rotateX(30deg) skewX(10deg);
+  z-index: -1;
+}
+
+.monitor:after
+{
+  content: "";
+  width: 350px;
+  height: 30px;
+  background: #d8d8d8;
+  position: absolute;
+  left: 30%;
+  margin: auto;
+  top: 540px;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+p {
+  text-align: center;
+  font-size: 20px;
+  font-style: bold;
+  font-family: fantasy;
+}
+
+.note {
+  margin: auto;
+  text-decoration: none;
+  text-align: center;
+  color: #000;
+  background: #ffc;
+  display: block;
+  height: 150px;;
+  width: 200px;
+  padding: 1em;
+  -webkit-box-shadow: 11px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 11px 10px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 11px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+.title {
+  text-decoration: underline;
+  font-size: 15px;
+  font-style: oblique;
+  font-family: Georgia, Arial;
+}
+
+.choices {
+  font-size: 15px;
+  font-family: Verdana, Arial;
+}
+
+#table {
+  margin: auto;
+  width: 400px;
+  height: 450px;
+  border-bottom: 15px solid #8B4513;
+  border-left: 15px solid #8B4513;
+  border-right: 15px solid #8B4513;
+  border-top: 15px solid #8B4513;
+  border-image: url('wood.jpg') 25% repeat;
+  background-image: url('corcho.jpg');
+}
+
+#desk {
+  position: absolute;
+  left: 5%;
+  width: 700px;
+  height: 90px;
+  content: "";
+  background: #000;
+  top: 570px;
+  background-image: url('wood.jpg');
+}
+
+#sacar {
+  position: absolute;
+  right: 20%;
+  border-radius: 15px;
+  height: 30px;
+  width: 100px;
+  background-color: #FFF8DC;
+  font-family: Verdana, Arial;
+}
+
+#sacar:hover {
+  background-color: #FFEBCD;
+}
